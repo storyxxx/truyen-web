@@ -1,34 +1,31 @@
-const list = document.getElementById("list");
+// 🌙 DARK MODE
+function toggleDark() {
+  document.body.classList.toggle("dark");
+}
 
-function render(data){
-  list.innerHTML = "";
-  data.forEach(s => {
-    list.innerHTML += `
-      <div class="card">
-        <h3><a href="${s.link}">${s.title}</a></h3>
-        <p>${s.tag.join(", ")}</p>
-      </div>
-    `;
+// 🔍 SEARCH REALTIME
+document.getElementById("search").addEventListener("input", function() {
+  const keyword = this.value.toLowerCase();
+  const cards = document.querySelectorAll(".card");
+
+  cards.forEach(card => {
+    const title = card.dataset.title;
+    card.style.display = title.includes(keyword) ? "flex" : "none";
   });
-}
-
-render(stories);
-
-// FILTER
-function filter(tag){
-  if(tag === "all") return render(stories);
-  let res = stories.filter(s => s.tag.includes(tag));
-  render(res);
-}
-
-// SEARCH
-document.getElementById("search").addEventListener("input", e=>{
-  let v = e.target.value.toLowerCase();
-  let res = stories.filter(s => s.title.toLowerCase().includes(v));
-  render(res);
 });
 
-// DARK MODE
-function toggleDark(){
-  document.body.classList.toggle("dark");
+// ⚡ LOAD PAGE KHÔNG RELOAD
+function loadPage(url) {
+  fetch(url)
+    .then(res => res.text())
+    .then(html => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+
+      const content = doc.querySelector(".card") || doc.body;
+
+      document.getElementById("app").innerHTML = content.innerHTML;
+
+      window.scrollTo(0, 0);
+    });
 }
