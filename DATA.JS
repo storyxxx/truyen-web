@@ -1,17 +1,22 @@
 const stories = [
 {
-  title: "Tổng Tài Lạnh Lùng",
+  title: "Hiện Đại",
   tag: ["tongtai","sung","ngontinh"],
   link: "truyen/truyen1.html"
 },
 {
-  title: "Xuyên Không Cổ Đại",
-  tag: ["xuyenkhong","nguoc"],
+  title: "Cổ Đại",
+  tag: ["xuyenkhong","nguoc","codai"],
   link: "truyen/truyen1.html"
 },
 {
-  title: "Hôn Nhân Hợp Đồng",
+  title: "Dân quốc",
   tag: ["tongtai","nguoc"],
+  link: "truyen/truyen1.html"
+},
+{
+  title: "H văn",
+  tag: ["H+"],
   link: "truyen/truyen1.html"
 }
 ];
