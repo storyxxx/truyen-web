@@ -1,41 +1,84 @@
 body {
-  font-family: Arial;
+  font-family: 'Segoe UI', Arial, sans-serif;
   margin: 0;
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  min-height: 100vh;
 }
 
-header {
-  background: #ff4d6d;
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #ff4d6d, #ff758c);
   color: white;
-  padding: 10px;
+  padding: 15px;
   text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
 }
 
 input {
   width: 90%;
-  padding: 8px;
-  margin-top: 5px;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
 }
 
-.filters {
+/* NAVBAR */
+.navbar {
   display: flex;
   overflow-x: auto;
-  background: white;
+  background: rgba(255,255,255,0.9);
+  padding: 10px;
+  backdrop-filter: blur(10px);
+}
+
+.navbar a {
+  margin-right: 12px;
+  padding: 8px 14px;
+  text-decoration: none;
+  color: #333;
+  background: #fff;
+  border-radius: 20px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.navbar a:hover {
+  background: #ff4d6d;
+  color: white;
+}
+
+/* MAIN */
+main {
   padding: 10px;
 }
 
-.filters button {
-  margin-right: 10px;
-  padding: 5px 10px;
-  border: none;
-  background: #eee;
-}
-
+/* CARD */
 .card {
-  background: white;
-  margin: 10px;
-  padding: 10px;
-  border-radius: 10px;
+  background: rgba(255,255,255,0.95);
+  margin: 15px 0;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h2 a {
+  text-decoration: none;
+  color: #ff4d6d;
+}
+
+.card p {
+  color: #666;
 }
 
 /* DARK MODE */
@@ -43,6 +86,7 @@ input {
   background: #111;
   color: white;
 }
+
 .dark .card {
   background: #222;
 }
