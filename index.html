@@ -10,13 +10,16 @@
 <body>
 
 <header class="header">
-  <div class="logo">📚 Truyện Hay</div>
+  <div class="top-bar">
+    <div class="logo">📚 Truyện Hay</div>
+    <button onclick="toggleDark()">🌙</button>
+  </div>
 
-  <input type="text" placeholder="🔍 Tìm truyện...">
+  <input id="search" type="text" placeholder="🔍 Tìm truyện...">
 </header>
 
 <nav class="navbar">
-  <a href="index.html">🏠 Home</a>
+  <a href="#">🏠 Home</a>
   <a href="#">Ngôn tình</a>
   <a href="#">Xuyên không</a>
   <a href="#">Trọng sinh</a>
@@ -25,27 +28,31 @@
   <a href="#">H+</a>
 </nav>
 
-<main>
+<main id="app">
 
-  <div class="card">
-    <h2>
-      <a href="truyen/truyen1.html">
-        TRẦM LUÂN TRONG VÒNG LẶP: KHÔN TRẠCH CỦA BẠO QUÂN
-      </a>
-    </h2>
-    <p>Ngôn tình - cổ đại - H+</p>
+  <!-- CARD -->
+  <div class="card" data-title="trầm luân bạo quân">
+    <img src="https://picsum.photos/300/180?random=1">
+    <div>
+      <h2 onclick="loadPage('truyen/truyen1.html')">
+        TRẦM LUÂN TRONG VÒNG LẶP
+      </h2>
+      <p>Ngôn tình - cổ đại - H+</p>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>
-      <a href="truyen/truyen1.html">
+  <div class="card" data-title="cô vợ tổng tài">
+    <img src="https://picsum.photos/300/180?random=2">
+    <div>
+      <h2 onclick="loadPage('truyen/truyen1.html')">
         Cô Vợ Nhỏ Của Tổng Tài
-      </a>
-    </h2>
-    <p>Ngôn tình - Sủng</p>
+      </h2>
+      <p>Ngôn tình - Sủng</p>
+    </div>
   </div>
 
 </main>
 
+<script src="app.js"></script>
 </body>
 </html>
