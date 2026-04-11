@@ -1,10 +1,9 @@
-// 📚 Lấy số chương
 function getChap() {
   const match = window.location.pathname.match(/chap(\d+)\.html/);
   return match ? parseInt(match[1]) : 1;
 }
 
-// ⬅️➡️ NAV
+// NEXT / PREV
 function nextChap() {
   let c = getChap();
   window.location.href = `chap${c + 1}.html`;
@@ -15,23 +14,17 @@ function prevChap() {
   if (c > 1) window.location.href = `chap${c - 1}.html`;
 }
 
-// 🏠 HOME
+// HOME
 function goHome() {
   window.location.href = "../index.html";
 }
 
-// 🌙 DARK MODE
+// DARK
 function toggleDark() {
   document.body.classList.toggle("dark");
-  localStorage.setItem("dark", document.body.classList.contains("dark"));
 }
 
-// LOAD DARK
-if (localStorage.getItem("dark") === "true") {
-  document.body.classList.add("dark");
-}
-
-// 🔠 FONT SIZE
+// FONT
 let size = localStorage.getItem("font") || 18;
 
 function applyFont() {
@@ -52,10 +45,10 @@ function decreaseFont() {
 
 applyFont();
 
-// 💾 SAVE CHAPTER
+// SAVE
 localStorage.setItem("lastChap", window.location.href);
 
-// 📱 SWIPE (mobile)
+// SWIPE
 let startY = 0;
 
 document.addEventListener("touchstart", e => {
@@ -65,15 +58,6 @@ document.addEventListener("touchstart", e => {
 document.addEventListener("touchend", e => {
   let endY = e.changedTouches[0].clientY;
 
-  if (startY - endY > 50) nextChap();   // swipe up
-  if (endY - startY > 50) prevChap();   // swipe down
+  if (startY - endY > 50) nextChap();
+  if (endY - startY > 50) prevChap();
 });
-
-// ⚡ PRELOAD NEXT
-(function preload() {
-  let c = getChap();
-  const link = document.createElement("link");
-  link.rel = "prefetch";
-  link.href = `chap${c + 1}.html`;
-  document.head.appendChild(link);
-})();
