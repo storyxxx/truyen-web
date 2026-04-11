@@ -1,17 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chương 2: Ngược luyến thấu xương</title>
 <link rel="stylesheet" href="../style.css">
-<title>Chương 2</title>
 </head>
 
-<body>
+<body class="reader">
 
-<div class="card">
+<!-- TOP BAR -->
+<div class="reader-header">
+  <button onclick="goHome()">🏠</button>
+  <span>Chương 2: Ngược luyến thấu xương</span>
+  <button onclick="toggleDark()">🌙</button>
+</div>
+
+<!-- CONTENT -->
+<div class="reader-content" id="content">
   <h2>Chương 2: Ngược luyến thấu xương</h2>
-  <p>Tần Hoài Ngự tiến lại gần, nắm lấy cằm nàng nhấc bổng lên. Ánh mắt hắn quét qua gương mặt nhợt nhạt nhưng vẫn diễm lệ thoát tục của nàng. Cách đây ba ngày, chính hắn đã hạ chỉ phế hậu, tống nàng vào đây vì tội danh thông đồng với ngoại bang – một tội danh mà cả hai đều biết là giả.
+
+  <p>
+Tần Hoài Ngự tiến lại gần, nắm lấy cằm nàng nhấc bổng lên. Ánh mắt hắn quét qua gương mặt nhợt nhạt nhưng vẫn diễm lệ thoát tục của nàng. Cách đây ba ngày, chính hắn đã hạ chỉ phế hậu, tống nàng vào đây vì tội danh thông đồng với ngoại bang – một tội danh mà cả hai đều biết là giả.
 
 “Van xin trẫm đi.” Hắn cười gằn, ngón tay cái miết mạnh lên đôi môi sưng đỏ của nàng. “Chỉ cần nàng cầu xin, trẫm sẽ ban phát cho nàng sự an ủi mà một Khôn Trạch hèn mọn đang khao khát.”
 
@@ -23,13 +33,18 @@ Tần Hoài Ngự nghe câu trả lời của nàng, cơn giận dữ bùng phá
 
 “Muốn chết? Không dễ thế đâu.”
 
-Hắn thô bạo xé toạc y phục của nàng. Làn da trắng ngần của Khôn Trạch dưới ánh trăng mờ ảo hiện ra như khối ngọc thạch hoàn mỹ nhất. Mùi hương hoa mai càng thêm nồng đậm, mời gọi, khiêu khích bản năng nguyên thủy nhất của Càn Nguyên.</p>
-
-  <div>
-    <a href="chap1.html">⬅️ Prev</a>
-    <a href="chap3.html">➡️ Next</a>
-  </div>
+Hắn thô bạo xé toạc y phục của nàng. Làn da trắng ngần của Khôn Trạch dưới ánh trăng mờ ảo hiện ra như khối ngọc thạch hoàn mỹ nhất. Mùi hương hoa mai càng thêm nồng đậm, mời gọi, khiêu khích bản năng nguyên thủy nhất của Càn Nguyên.
+  </p>
 </div>
 
+<!-- CONTROL BAR -->
+<div class="reader-controls">
+  <button onclick="prevChap()">⬅️</button>
+  <button onclick="increaseFont()">A+</button>
+  <button onclick="decreaseFont()">A-</button>
+  <button onclick="nextChap()">➡️</button>
+</div>
+
+<script src="../reader.js"></script>
 </body>
 </html>
