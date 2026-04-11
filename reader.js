@@ -3,7 +3,6 @@ function getChap() {
   return match ? parseInt(match[1]) : 1;
 }
 
-// NEXT / PREV
 function nextChap() {
   let c = getChap();
   window.location.href = `chap${c + 1}.html`;
@@ -14,12 +13,10 @@ function prevChap() {
   if (c > 1) window.location.href = `chap${c - 1}.html`;
 }
 
-// HOME
 function goHome() {
-  window.location.href = "../index.html";
+  window.location.href = "../../index.html";
 }
 
-// DARK
 function toggleDark() {
   document.body.classList.toggle("dark");
 }
@@ -28,7 +25,8 @@ function toggleDark() {
 let size = localStorage.getItem("font") || 18;
 
 function applyFont() {
-  document.getElementById("content").style.fontSize = size + "px";
+  const el = document.getElementById("content");
+  if (el) el.style.fontSize = size + "px";
 }
 
 function increaseFont() {
