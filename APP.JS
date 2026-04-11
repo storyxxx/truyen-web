@@ -16,3 +16,16 @@ document.getElementById("search").addEventListener("input", function() {
 function goToStory() {
   window.location.href = "chapters/chap1.html";
 }
+function filterTag(tag) {
+  const cards = document.querySelectorAll(".card");
+
+  cards.forEach(card => {
+    const tags = card.dataset.tag;
+
+    if (tag === "all" || tags.includes(tag)) {
+      card.style.display = "flex";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
