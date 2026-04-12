@@ -53,71 +53,118 @@ Tần Hoài Ngự. Hắn vẫn như vậy, đôi mắt hẹp dài chứa đựng
     <button onclick="stopStory()">⏹</button>
 </div>
 <script>
-let audioQueue = [];
+let voices = [];
+let sentences = [];
 let index = 0;
 let isPaused = false;
-let currentAudio = null;
 
 /* =========================
-   CHIA CÂU
+   LOAD VOICES (QUAN TRỌNG)
+========================= */
+function loadVoices() {
+    voices = speechSynthesis.getVoices();
+    console.log("🎤 voices:", voices.map(v => v.lang + " | " + v.name));
+}
+loadVoices();
+speechSynthesis.onvoiceschanged = loadVoices;
+
+/* =========================
+   ÉP TÌM VOICE VIỆT (CHẶT NHẤT)
+========================= */
+function getVietnameseVoice() {
+    let v = voices;
+
+    // ưu tiên tuyệt đối vi-VN
+    let voice = v.find(x => x.lang === "vi-VN");
+
+    // fallback mở rộng
+    if (!voice) voice = v.find(x => x.lang.includes("vi"));
+
+    // fallback Google / Microsoft có vietnam
+    if (!voice) {
+        voice = v.find(x =>
+            (x.name || "").toLowerCase().includes("vietnam") ||
+            (x.name || "").toLowerCase().includes("viet")
+        );
+    }
+
+    return voice || null;
+}
+
+/* =========================
+   CHIA CÂU (CHUẨN)
 ========================= */
 function splitText(text) {
     return text
         .replace(/\n/g, " ")
         .replace(/\s+/g, " ")
-        .match(/.{1,180}(\s|$)/g) || [];
+        .split(/(?<=[.!?…,:])\s+/)
+        .filter(Boolean);
 }
 
 /* =========================
-   BẮT ĐẦU ĐỌC
+   START
 ========================= */
 function readStory() {
     stopStory();
 
     const content = document.querySelector("#content");
-    if (!content) return;
+    if (!content) {
+        alert("Không tìm thấy #content");
+        return;
+    }
 
     const text = content.innerText;
 
-    audioQueue = splitText(text);
+    sentences = splitText(text);
     index = 0;
     isPaused = false;
 
-    playNext();
+    // ⚠️ quan trọng: unlock audio engine
+    speechSynthesis.cancel();
+
+    setTimeout(() => {
+        speakNext();
+    }, 200);
 }
 
 /* =========================
-   PHÁT GOOGLE TTS (FORCED VIETNAMESE)
+   SPEAK
 ========================= */
-function playNext() {
+function speakNext() {
     if (isPaused) return;
-    if (index >= audioQueue.length) return;
+    if (index >= sentences.length) return;
 
-    const text = encodeURIComponent(audioQueue[index]);
+    const text = sentences[index];
 
-    // ⚠️ dùng Google translate TTS (ổn định hơn speechSynthesis)
-    const url =
-        "https://translate.google.com/translate_tts?ie=UTF-8&tl=vi&client=tw-ob&q=" +
-        text;
+    const utter = new SpeechSynthesisUtterance(text);
 
-    currentAudio = new Audio(url);
+    const voice = getVietnameseVoice();
 
-    currentAudio.volume = 1;
+    if (voice) {
+        utter.voice = voice;
+        utter.lang = "vi-VN";
+    } else {
+        console.warn("❌ KHÔNG CÓ VOICE VIỆT → Chrome sẽ đọc mặc định");
+        utter.lang = "vi-VN";
+    }
 
-    currentAudio.onended = () => {
+    utter.rate = 0.95;
+    utter.pitch = 1;
+    utter.volume = 1;
+
+    utter.onend = () => {
         index++;
-        playNext();
+        speakNext();
     };
 
-    currentAudio.onerror = () => {
-        console.log("❌ lỗi đoạn:", index);
+    utter.onerror = (e) => {
+        console.log("error:", e);
         index++;
-        playNext();
+        speakNext();
     };
 
-    currentAudio.play().catch(err => {
-        console.log("❌ bị block autoplay:", err);
-    });
+    speechSynthesis.speak(utter);
 }
 
 /* =========================
@@ -125,7 +172,7 @@ function playNext() {
 ========================= */
 function pauseStory() {
     isPaused = true;
-    if (currentAudio) currentAudio.pause();
+    speechSynthesis.pause();
 }
 
 /* =========================
@@ -133,8 +180,7 @@ function pauseStory() {
 ========================= */
 function resumeStory() {
     isPaused = false;
-    if (currentAudio) currentAudio.play();
-    else playNext();
+    speechSynthesis.resume();
 }
 
 /* =========================
@@ -143,11 +189,8 @@ function resumeStory() {
 function stopStory() {
     isPaused = true;
     index = 0;
-    audioQueue = [];
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-    }
+    sentences = [];
+    speechSynthesis.cancel();
 }
 </script>
 
