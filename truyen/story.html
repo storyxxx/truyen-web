@@ -4,3 +4,71 @@
     <button onclick="resumeStory()">▶ Resume</button>
     <button onclick="stopStory()">⏹ Stop</button>
 </div>
+<script>
+let voices = [];
+let currentText = [];
+let index = 0;
+let isPaused = false;
+
+function loadVoices() {
+    voices = window.speechSynthesis.getVoices();
+}
+
+window.speechSynthesis.onvoiceschanged = loadVoices;
+
+function splitText(text) {
+    return text
+        .replace(/\n/g, " ")
+        .split(/(?<=[.!?…])\s+/)
+        .filter(t => t.trim().length > 0);
+}
+
+function readStory() {
+    stopStory();
+
+    let content = document.querySelector("#story-content");
+    let text = content.innerText;
+
+    currentText = splitText(text);
+    index = 0;
+    isPaused = false;
+
+    speakNext();
+}
+
+function speakNext() {
+    if (index >= currentText.length || isPaused) return;
+
+    let utter = new SpeechSynthesisUtterance(currentText[index]);
+
+    utter.lang = "vi-VN";
+    utter.rate = 1;
+    utter.pitch = 1;
+
+    let viVoice = voices.find(v => v.lang.includes("vi"));
+    if (viVoice) utter.voice = viVoice;
+
+    utter.onend = function () {
+        index++;
+        speakNext();
+    };
+
+    window.speechSynthesis.speak(utter);
+}
+
+function pauseStory() {
+    isPaused = true;
+    window.speechSynthesis.pause();
+}
+
+function resumeStory() {
+    isPaused = false;
+    window.speechSynthesis.resume();
+}
+
+function stopStory() {
+    isPaused = true;
+    index = 0;
+    window.speechSynthesis.cancel();
+}
+</script>
