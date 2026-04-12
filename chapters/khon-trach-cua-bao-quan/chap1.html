@@ -53,19 +53,38 @@ Tần Hoài Ngự. Hắn vẫn như vậy, đôi mắt hẹp dài chứa đựng
     <button onclick="stopStory()">⏹</button>
 </div>
 <script>
-let audioQueue = [];
+let voices = [];
+let sentences = [];
 let index = 0;
 let isPaused = false;
-let currentAudio = null;
+let currentUtter = null;
 
 /* =========================
-   CHIA TEXT THÀNH ĐOẠN NHỎ
+   LOAD VOICE
+========================= */
+function loadVoices() {
+    voices = speechSynthesis.getVoices();
+}
+loadVoices();
+speechSynthesis.onvoiceschanged = loadVoices;
+
+/* =========================
+   LẤY GIỌNG VIỆT
+========================= */
+function getVietnameseVoice() {
+    return voices.find(v => v.lang === "vi-VN")
+        || voices.find(v => v.lang.includes("vi"))
+        || null;
+}
+
+/* =========================
+   CHIA CÂU
 ========================= */
 function splitText(text) {
     return text
         .replace(/\n/g, " ")
-        .trim()
-        .match(/.{1,180}(\s|$)/g) || [];
+        .split(/(?<=[.!?…,:])\s+/)
+        .filter(Boolean);
 }
 
 /* =========================
@@ -83,45 +102,44 @@ function readStory() {
 
     const text = content.innerText || content.textContent;
 
-    audioQueue = splitText(text);
+    sentences = splitText(text);
     index = 0;
     isPaused = false;
 
-    playNext();
+    speakNext();
 }
 
 /* =========================
-   PHÁT TỪNG ĐOẠN
+   ĐỌC TỪNG CÂU
 ========================= */
-function playNext() {
+function speakNext() {
     if (isPaused) return;
-    if (index >= audioQueue.length) return;
+    if (index >= sentences.length) return;
 
-    const text = encodeURIComponent(audioQueue[index]);
+    const text = sentences[index];
 
-    const url =
-        "https://translate.google.com/translate_tts?ie=UTF-8&q=" +
-        text +
-        "&tl=vi&client=tw-ob";
+    const utter = new SpeechSynthesisUtterance(text);
 
-    currentAudio = new Audio(url);
+    const viVoice = getVietnameseVoice();
 
-    currentAudio.volume = 1;
+    if (viVoice) {
+        utter.voice = viVoice;
+        utter.lang = viVoice.lang;
+    } else {
+        utter.lang = "vi-VN";
+        console.warn("⚠️ Không có giọng Việt, có thể đọc sai");
+    }
 
-    currentAudio.onended = () => {
+    utter.rate = 0.95;
+    utter.pitch = 1;
+
+    utter.onend = () => {
         index++;
-        playNext();
+        speakNext();
     };
 
-    currentAudio.onerror = () => {
-        console.log("⚠️ Lỗi đoạn:", index);
-        index++;
-        playNext();
-    };
-
-    currentAudio.play().catch(err => {
-        console.log("⚠️ Bị chặn autoplay:", err);
-    });
+    currentUtter = utter;
+    speechSynthesis.speak(utter);
 }
 
 /* =========================
@@ -129,48 +147,25 @@ function playNext() {
 ========================= */
 function pauseStory() {
     isPaused = true;
-
-    if (currentAudio) {
-        currentAudio.pause();
-    }
+    speechSynthesis.pause();
 }
 
 /* =========================
    RESUME
 ========================= */
 function resumeStory() {
-    if (!isPaused) return;
-
     isPaused = false;
-
-    if (currentAudio) {
-        currentAudio.play().catch(() => {
-            playNext();
-        });
-    } else {
-        playNext();
-    }
+    speechSynthesis.resume();
 }
 
 /* =========================
-   STOP HOÀN TOÀN
+   STOP
 ========================= */
 function stopStory() {
     isPaused = true;
     index = 0;
-    audioQueue = [];
-
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-    }
-}
-
-/* =========================
-   (OPTION) DEBUG VOICE
-========================= */
-function testVoice() {
-    console.log("Queue:", audioQueue);
+    sentences = [];
+    speechSynthesis.cancel();
 }
 </script>
 
