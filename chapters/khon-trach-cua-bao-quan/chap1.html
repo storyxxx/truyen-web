@@ -58,17 +58,30 @@ let index = 0;
 let isPaused = false;
 let currentAudio = null;
 
+/* =========================
+   CHIA TEXT THÀNH ĐOẠN NHỎ
+========================= */
 function splitText(text) {
     return text
         .replace(/\n/g, " ")
-        .match(/.{1,200}(\s|$)/g);
+        .trim()
+        .match(/.{1,180}(\s|$)/g) || [];
 }
 
+/* =========================
+   BẮT ĐẦU ĐỌC
+========================= */
 function readStory() {
     stopStory();
 
-    let content = document.querySelector("#content");
-    let text = content.innerText;
+    const content = document.querySelector("#content");
+
+    if (!content) {
+        console.error("❌ Không tìm thấy #content");
+        return;
+    }
+
+    const text = content.innerText || content.textContent;
 
     audioQueue = splitText(text);
     index = 0;
@@ -77,38 +90,87 @@ function readStory() {
     playNext();
 }
 
+/* =========================
+   PHÁT TỪNG ĐOẠN
+========================= */
 function playNext() {
-    if (index >= audioQueue.length || isPaused) return;
+    if (isPaused) return;
+    if (index >= audioQueue.length) return;
 
-    let text = encodeURIComponent(audioQueue[index]);
+    const text = encodeURIComponent(audioQueue[index]);
 
-    let url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${text}&tl=vi&client=tw-ob`;
+    const url =
+        "https://translate.google.com/translate_tts?ie=UTF-8&q=" +
+        text +
+        "&tl=vi&client=tw-ob";
 
     currentAudio = new Audio(url);
+
+    currentAudio.volume = 1;
 
     currentAudio.onended = () => {
         index++;
         playNext();
     };
 
-    currentAudio.play();
+    currentAudio.onerror = () => {
+        console.log("⚠️ Lỗi đoạn:", index);
+        index++;
+        playNext();
+    };
+
+    currentAudio.play().catch(err => {
+        console.log("⚠️ Bị chặn autoplay:", err);
+    });
 }
 
+/* =========================
+   PAUSE
+========================= */
 function pauseStory() {
     isPaused = true;
-    if (currentAudio) currentAudio.pause();
+
+    if (currentAudio) {
+        currentAudio.pause();
+    }
 }
 
+/* =========================
+   RESUME
+========================= */
 function resumeStory() {
+    if (!isPaused) return;
+
     isPaused = false;
-    if (currentAudio) currentAudio.play();
-    else playNext();
+
+    if (currentAudio) {
+        currentAudio.play().catch(() => {
+            playNext();
+        });
+    } else {
+        playNext();
+    }
 }
 
+/* =========================
+   STOP HOÀN TOÀN
+========================= */
 function stopStory() {
     isPaused = true;
     index = 0;
-    if (currentAudio) currentAudio.pause();
+    audioQueue = [];
+
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+    }
+}
+
+/* =========================
+   (OPTION) DEBUG VOICE
+========================= */
+function testVoice() {
+    console.log("Queue:", audioQueue);
 }
 </script>
 
