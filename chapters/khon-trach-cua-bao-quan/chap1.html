@@ -45,7 +45,13 @@ Tần Hoài Ngự. Hắn vẫn như vậy, đôi mắt hẹp dài chứa đựng
 
 <script src="/truyen-web/reader.js"></script>
 
-  
+
+  <div style="position: fixed; bottom: 20px; right: 20px; z-index:9999;">
+    <button onclick="readStory()">🔊 Đọc</button>
+    <button onclick="pauseStory()">⏸</button>
+    <button onclick="resumeStory()">▶</button>
+    <button onclick="stopStory()">⏹</button>
+</div>
 <script>
 let audioQueue = [];
 let index = 0;
