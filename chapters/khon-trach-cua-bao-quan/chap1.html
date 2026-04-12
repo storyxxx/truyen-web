@@ -46,36 +46,16 @@ Tần Hoài Ngự. Hắn vẫn như vậy, đôi mắt hẹp dài chứa đựng
 <script src="/truyen-web/reader.js"></script>
 
   
-<div style="position: fixed; bottom: 20px; right: 20px; z-index:9999;">
-    <button onclick="readStory()">🔊 Đọc</button>
-    <button onclick="pauseStory()">⏸</button>
-    <button onclick="resumeStory()">▶</button>
-    <button onclick="stopStory()">⏹</button>
-</div>
-
 <script>
-let voices = [];
-let currentText = [];
+let audioQueue = [];
 let index = 0;
 let isPaused = false;
-
-function loadVoices() {
-    voices = speechSynthesis.getVoices();
-}
-loadVoices();
-speechSynthesis.onvoiceschanged = loadVoices;
-
-function getVietnameseVoice() {
-    return voices.find(v => v.lang === "vi-VN") 
-        || voices.find(v => v.lang.startsWith("vi")) 
-        || null;
-}
+let currentAudio = null;
 
 function splitText(text) {
     return text
         .replace(/\n/g, " ")
-        .split(/(?<=[.!?…,:])\s+/)
-        .filter(t => t.trim().length > 0);
+        .match(/.{1,200}(\s|$)/g);
 }
 
 function readStory() {
@@ -84,53 +64,45 @@ function readStory() {
     let content = document.querySelector("#content");
     let text = content.innerText;
 
-    currentText = splitText(text);
+    audioQueue = splitText(text);
     index = 0;
     isPaused = false;
 
-    speakNext();
+    playNext();
 }
 
-function speakNext() {
-    if (index >= currentText.length || isPaused) return;
+function playNext() {
+    if (index >= audioQueue.length || isPaused) return;
 
-    let utter = new SpeechSynthesisUtterance(currentText[index]);
+    let text = encodeURIComponent(audioQueue[index]);
 
-    let viVoice = getVietnameseVoice();
+    let url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${text}&tl=vi&client=tw-ob`;
 
-    if (viVoice) {
-        utter.voice = viVoice;
-        utter.lang = viVoice.lang;
-    } else {
-        utter.lang = "vi-VN"; // fallback
-        console.warn("⚠️ Không có voice tiếng Việt → có thể đọc sai");
-    }
+    currentAudio = new Audio(url);
 
-    utter.rate = 0.95;
-    utter.pitch = 1;
-
-    utter.onend = function () {
+    currentAudio.onended = () => {
         index++;
-        speakNext();
+        playNext();
     };
 
-    speechSynthesis.speak(utter);
+    currentAudio.play();
 }
 
 function pauseStory() {
     isPaused = true;
-    speechSynthesis.pause();
+    if (currentAudio) currentAudio.pause();
 }
 
 function resumeStory() {
     isPaused = false;
-    speechSynthesis.resume();
+    if (currentAudio) currentAudio.play();
+    else playNext();
 }
 
 function stopStory() {
     isPaused = true;
     index = 0;
-    speechSynthesis.cancel();
+    if (currentAudio) currentAudio.pause();
 }
 </script>
 
