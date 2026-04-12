@@ -52,6 +52,7 @@ Tần Hoài Ngự. Hắn vẫn như vậy, đôi mắt hẹp dài chứa đựng
     <button onclick="resumeStory()">▶</button>
     <button onclick="stopStory()">⏹</button>
 </div>
+
 <script>
 let voices = [];
 let sentences = [];
@@ -60,21 +61,37 @@ let isPaused = false;
 let currentUtter = null;
 
 /* =========================
-   LOAD VOICE
+   LOAD VOICES
 ========================= */
 function loadVoices() {
     voices = speechSynthesis.getVoices();
+    console.log("🎤 Voices available:", voices.map(v => v.lang + " - " + v.name));
 }
 loadVoices();
 speechSynthesis.onvoiceschanged = loadVoices;
 
 /* =========================
-   LẤY GIỌNG VIỆT
+   LẤY GIỌNG VIỆT CHUẨN
 ========================= */
 function getVietnameseVoice() {
-    return voices.find(v => v.lang === "vi-VN")
-        || voices.find(v => v.lang.includes("vi"))
-        || null;
+    const v = voices;
+
+    // ƯU TIÊN CHÍNH XÁC
+    let voice =
+        v.find(x => x.lang === "vi-VN") ||
+        v.find(x => x.lang === "vi_VN") ||
+        v.find(x => x.lang.startsWith("vi")) ||
+        null;
+
+    // fallback Google / Microsoft có chữ Vietnamese
+    if (!voice) {
+        voice = v.find(x =>
+            x.name.toLowerCase().includes("vietnam") ||
+            x.name.toLowerCase().includes("viet")
+        );
+    }
+
+    return voice;
 }
 
 /* =========================
@@ -83,7 +100,8 @@ function getVietnameseVoice() {
 function splitText(text) {
     return text
         .replace(/\n/g, " ")
-        .split(/(?<=[.!?…,:])\s+/)
+        .replace(/\s+/g, " ")
+        .split(/(?<=[.!?…])\s+/)
         .filter(Boolean);
 }
 
@@ -124,16 +142,23 @@ function speakNext() {
 
     if (viVoice) {
         utter.voice = viVoice;
-        utter.lang = viVoice.lang;
+        utter.lang = "vi-VN"; // ÉP tiếng Việt
     } else {
+        console.warn("⚠️ KHÔNG CÓ VOICE VIỆT → có thể đọc sai");
         utter.lang = "vi-VN";
-        console.warn("⚠️ Không có giọng Việt, có thể đọc sai");
     }
 
     utter.rate = 0.95;
     utter.pitch = 1;
+    utter.volume = 1;
 
     utter.onend = () => {
+        index++;
+        speakNext();
+    };
+
+    utter.onerror = (e) => {
+        console.error("❌ Voice error:", e);
         index++;
         speakNext();
     };
@@ -166,6 +191,7 @@ function stopStory() {
     index = 0;
     sentences = [];
     speechSynthesis.cancel();
+    currentUtter = null;
 }
 </script>
 
