@@ -21,8 +21,8 @@ function toggleDark() {
   document.body.classList.toggle("dark");
 }
 
-// FONT
-let size = localStorage.getItem("font") || 18;
+// FONT (FIX LỖI)
+let size = parseInt(localStorage.getItem("font")) || 18;
 
 function applyFont() {
   const el = document.getElementById("content");
