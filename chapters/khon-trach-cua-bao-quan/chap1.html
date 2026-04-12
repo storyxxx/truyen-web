@@ -45,5 +45,80 @@ Tần Hoài Ngự. Hắn vẫn như vậy, đôi mắt hẹp dài chứa đựng
 </div>
 
 <script src="/truyen-web/reader.js"></script>
+
+  <div style="position: fixed; bottom: 20px; right: 20px; z-index:9999;">
+    <button onclick="readStory()">🔊 Đọc</button>
+    <button onclick="pauseStory()">⏸</button>
+    <button onclick="resumeStory()">▶</button>
+    <button onclick="stopStory()">⏹</button>
+</div>
+<script>
+let voices = [];
+let currentText = [];
+let index = 0;
+let isPaused = false;
+
+function loadVoices() {
+    voices = window.speechSynthesis.getVoices();
+}
+window.speechSynthesis.onvoiceschanged = loadVoices;
+
+function splitText(text) {
+    return text
+        .replace(/\n/g, " ")
+        .split(/(?<=[.!?…])\s+/)
+        .filter(t => t.trim().length > 0);
+}
+
+function readStory() {
+    stopStory();
+
+    let content = document.querySelector("#content"); // 👈 CHÍNH XÁC THEO CODE CỦA BẠN
+    let text = content.innerText;
+
+    currentText = splitText(text);
+    index = 0;
+    isPaused = false;
+
+    speakNext();
+}
+
+function speakNext() {
+    if (index >= currentText.length || isPaused) return;
+
+    let utter = new SpeechSynthesisUtterance(currentText[index]);
+
+    utter.lang = "vi-VN";
+    utter.rate = 1;
+    utter.pitch = 1;
+
+    let viVoice = voices.find(v => v.lang.includes("vi"));
+    if (viVoice) utter.voice = viVoice;
+
+    utter.onend = function () {
+        index++;
+        speakNext();
+    };
+
+    window.speechSynthesis.speak(utter);
+}
+
+function pauseStory() {
+    isPaused = true;
+    window.speechSynthesis.pause();
+}
+
+function resumeStory() {
+    isPaused = false;
+    window.speechSynthesis.resume();
+}
+
+function stopStory() {
+    isPaused = true;
+    index = 0;
+    window.speechSynthesis.cancel();
+}
+</script>
+  
 </body>
 </html>
