@@ -46,7 +46,7 @@ applyFont();
 // SAVE
 localStorage.setItem("lastChap", window.location.href);
 
-// SWIPE
+// SWIPE (FIX LỖI NHẢY CHƯƠNG KHI SCROLL)
 let startY = 0;
 
 document.addEventListener("touchstart", e => {
@@ -55,6 +55,21 @@ document.addEventListener("touchstart", e => {
 
 document.addEventListener("touchend", e => {
   let endY = e.changedTouches[0].clientY;
+
+  const scrollTop = window.scrollY;
+  const scrollHeight = document.body.scrollHeight;
+  const clientHeight = window.innerHeight;
+
+  // 👉 Vuốt lên → NEXT (chỉ khi ở cuối trang)
+  if (startY - endY > 80 && scrollTop + clientHeight >= scrollHeight - 10) {
+    nextChap();
+  }
+
+  // 👉 Vuốt xuống → PREV (chỉ khi ở đầu trang)
+  if (endY - startY > 80 && scrollTop <= 10) {
+    prevChap();
+  }
+});
 
   if (startY - endY > 50) nextChap();
   if (endY - startY > 50) prevChap();
