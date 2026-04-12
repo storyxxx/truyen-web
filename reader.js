@@ -1,3 +1,9 @@
+window.nextChap = nextChap;
+window.prevChap = prevChap;
+window.goHome = goHome;
+window.toggleDark = toggleDark;
+window.increaseFont = increaseFont;
+window.decreaseFont = decreaseFont;
 function getChap() {
   const match = window.location.pathname.match(/chap(\d+)\.html/);
   return match ? parseInt(match[1]) : 1;
