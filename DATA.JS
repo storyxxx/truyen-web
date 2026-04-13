@@ -11,7 +11,7 @@ const stories = [
   tags: ["ngontinh","codai"],
   link: "truyen/tuyet-trung-chieu-truong-an-nhat-mong.html",
   img: "images/bia2.jpg",
-  desc: "Truyện cổ đại nhẹ nhàng, sâu sắc"
+  desc: "Truyện cổ đại sâu sắc, cảm xúc"
 },
 {
   title: "Test",
