@@ -1,3 +1,6 @@
+// ===================== GLOBAL =====================
+
+// gắn vào window để HTML gọi được
 window.nextChap = nextChap;
 window.prevChap = prevChap;
 window.goHome = goHome;
@@ -5,17 +8,16 @@ window.toggleDark = toggleDark;
 window.increaseFont = increaseFont;
 window.decreaseFont = decreaseFont;
 
-// ===================== CHAP NAVIGATION FIX =====================
+// ===================== CHAPTER =====================
 
 function getChap() {
   const match = window.location.pathname.match(/chap(\d+)\.html/);
   return match ? parseInt(match[1]) : 1;
 }
 
-// 👉 FIX: giới hạn tối đa chapter (QUAN TRỌNG)
+// 👉 sửa số này theo truyện
 function getMaxChap() {
-  // bạn sửa số này theo tổng chương truyện
-  return 4;
+  return 50; // ví dụ 50 chương
 }
 
 function nextChap() {
@@ -23,9 +25,6 @@ function nextChap() {
 
   if (c < getMaxChap()) {
     window.location.href = `chap${c + 1}.html`;
-  } else {
-    // đang ở chap cuối → không cho lỗi
-    console.log("Đã ở chương cuối");
   }
 }
 
@@ -34,18 +33,16 @@ function prevChap() {
 
   if (c > 1) {
     window.location.href = `chap${c - 1}.html`;
-  } else {
-    console.log("Đã ở chương đầu");
   }
 }
 
 // ===================== HOME =====================
 
 function goHome() {
-  window.location.href = "../../index.html";
+  window.location.href = "/truyen-web/index.html";
 }
 
-// ===================== DARK MODE =====================
+// ===================== DARK =====================
 
 function toggleDark() {
   document.body.classList.toggle("dark");
@@ -74,17 +71,19 @@ function decreaseFont() {
 
 applyFont();
 
-// ===================== SAVE LAST CHAPTER =====================
+// ===================== SAVE =====================
 
 localStorage.setItem("lastChap", window.location.href);
 
-// ===================== SWIPE FIX =====================
+// ===================== SWIPE FIX (QUAN TRỌNG NHẤT) =====================
 
 let startY = 0;
+let startTime = 0;
 let isScrolling = false;
 
 document.addEventListener("touchstart", e => {
   startY = e.touches[0].clientY;
+  startTime = Date.now();
   isScrolling = false;
 });
 
@@ -93,13 +92,23 @@ document.addEventListener("touchmove", () => {
 });
 
 document.addEventListener("touchend", e => {
-  if (isScrolling) return; // ❌ nếu là scroll thì bỏ
-
   let endY = e.changedTouches[0].clientY;
-  let diff = startY - endY;
+  let diffY = startY - endY;
+  let duration = Date.now() - startTime;
 
-  if (Math.abs(diff) > 150) {
-    if (diff > 0) nextChap();
-    else prevChap();
+  // ❌ nếu là scroll thì bỏ
+  if (isScrolling) return;
+
+  // ❌ nếu vuốt chậm (scroll) thì bỏ
+  if (duration > 300) return;
+
+  // ❌ nếu vuốt nhẹ thì bỏ
+  if (Math.abs(diffY) < 150) return;
+
+  // ✅ chỉ swipe nhanh + mạnh mới chuyển chap
+  if (diffY > 0) {
+    nextChap();
+  } else {
+    prevChap();
   }
 });
