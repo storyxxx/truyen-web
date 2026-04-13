@@ -173,3 +173,21 @@ body.reader {
   position: relative;
   z-index: 2;
 }
+.pagination {
+  text-align: center;
+  margin: 20px;
+}
+
+.pagination button {
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #eee;
+  cursor: pointer;
+}
+
+.pagination .active {
+  background: #ff4d6d;
+  color: white;
+}
