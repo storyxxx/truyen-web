@@ -1,6 +1,9 @@
+document.addEventListener("DOMContentLoaded", () => {
+
 let currentPage = 1;
 const perPage = 6;
 
+// clone data gốc
 let filteredStories = [...stories];
 
 // ================= RENDER =================
@@ -14,6 +17,11 @@ function renderStories() {
   let end = start + perPage;
 
   let pageItems = filteredStories.slice(start, end);
+
+  if (pageItems.length === 0) {
+    app.innerHTML = "<p style='padding:20px'>❌ Không tìm thấy truyện</p>";
+    return;
+  }
 
   pageItems.forEach(story => {
     const card = document.createElement("div");
@@ -77,8 +85,8 @@ if (searchInput) {
   });
 }
 
-// ================= FILTER =================
-function filterTag(tag) {
+// ================= FILTER TAG =================
+window.filterTag = function(tag) {
   if (tag === "all") {
     filteredStories = [...stories];
   } else {
@@ -92,9 +100,11 @@ function filterTag(tag) {
 }
 
 // ================= DARK =================
-function toggleDark() {
+window.toggleDark = function() {
   document.body.classList.toggle("dark");
 }
 
 // ================= INIT =================
 renderStories();
+
+});
