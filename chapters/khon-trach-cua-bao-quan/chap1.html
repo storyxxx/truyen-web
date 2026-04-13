@@ -47,53 +47,26 @@ Tần Hoài Ngự. Hắn vẫn như vậy, đôi mắt hẹp dài chứa đựng
 
 
   <div style="position: fixed; bottom: 20px; right: 20px; z-index:9999;">
-    <button onclick="readStory()">🔊 Đọc</button>
+    <button onclick="initAndRead()">🔊 Đọc</button>
     <button onclick="pauseStory()">⏸</button>
     <button onclick="resumeStory()">▶</button>
     <button onclick="stopStory()">⏹</button>
 </div>
-<script>
-let voices = [];
+  <script>
 let sentences = [];
 let index = 0;
 let isPaused = false;
 
-/* =========================
-   LOAD VOICES (QUAN TRỌNG)
-========================= */
-function loadVoices() {
-    voices = speechSynthesis.getVoices();
-    console.log("🎤 voices:", voices.map(v => v.lang + " | " + v.name));
-}
-loadVoices();
-speechSynthesis.onvoiceschanged = loadVoices;
-
-/* =========================
-   ÉP TÌM VOICE VIỆT (CHẶT NHẤT)
-========================= */
+/* LOAD VOICES */
 function getVietnameseVoice() {
-    let v = voices;
+    let voices = speechSynthesis.getVoices();
 
-    // ưu tiên tuyệt đối vi-VN
-    let voice = v.find(x => x.lang === "vi-VN");
-
-    // fallback mở rộng
-    if (!voice) voice = v.find(x => x.lang.includes("vi"));
-
-    // fallback Google / Microsoft có vietnam
-    if (!voice) {
-        voice = v.find(x =>
-            (x.name || "").toLowerCase().includes("vietnam") ||
-            (x.name || "").toLowerCase().includes("viet")
-        );
-    }
-
-    return voice || null;
+    return voices.find(v => v.lang === "vi-VN") ||
+           voices.find(v => v.lang.includes("vi")) ||
+           voices[0];
 }
 
-/* =========================
-   CHIA CÂU (CHUẨN)
-========================= */
+/* CHIA CÂU */
 function splitText(text) {
     return text
         .replace(/\n/g, " ")
@@ -102,15 +75,22 @@ function splitText(text) {
         .filter(Boolean);
 }
 
-/* =========================
-   START
-========================= */
+/* CLICK ĐỌC */
+function initAndRead() {
+    speechSynthesis.cancel(); // unlock audio
+
+    setTimeout(() => {
+        readStory();
+    }, 100);
+}
+
+/* START */
 function readStory() {
     stopStory();
 
-    const content = document.querySelector("#content");
+    const content = document.querySelector("#story-content");
     if (!content) {
-        alert("Không tìm thấy #content");
+        alert("Không tìm thấy nội dung truyện");
         return;
     }
 
@@ -120,32 +100,20 @@ function readStory() {
     index = 0;
     isPaused = false;
 
-    // ⚠️ quan trọng: unlock audio engine
-    speechSynthesis.cancel();
-
-    setTimeout(() => {
-        speakNext();
-    }, 200);
+    speakNext();
 }
 
-/* =========================
-   SPEAK
-========================= */
+/* ĐỌC */
 function speakNext() {
     if (isPaused) return;
     if (index >= sentences.length) return;
 
-    const text = sentences[index];
-
-    const utter = new SpeechSynthesisUtterance(text);
+    const utter = new SpeechSynthesisUtterance(sentences[index]);
 
     const voice = getVietnameseVoice();
 
     if (voice) {
         utter.voice = voice;
-        utter.lang = "vi-VN";
-    } else {
-        console.warn("❌ KHÔNG CÓ VOICE VIỆT → Chrome sẽ đọc mặc định");
         utter.lang = "vi-VN";
     }
 
@@ -158,8 +126,7 @@ function speakNext() {
         speakNext();
     };
 
-    utter.onerror = (e) => {
-        console.log("error:", e);
+    utter.onerror = () => {
         index++;
         speakNext();
     };
@@ -167,25 +134,19 @@ function speakNext() {
     speechSynthesis.speak(utter);
 }
 
-/* =========================
-   PAUSE
-========================= */
+/* PAUSE */
 function pauseStory() {
     isPaused = true;
     speechSynthesis.pause();
 }
 
-/* =========================
-   RESUME
-========================= */
+/* RESUME */
 function resumeStory() {
     isPaused = false;
     speechSynthesis.resume();
 }
 
-/* =========================
-   STOP
-========================= */
+/* STOP */
 function stopStory() {
     isPaused = true;
     index = 0;
@@ -193,8 +154,6 @@ function stopStory() {
     speechSynthesis.cancel();
 }
 </script>
-
-
   
 </body>
 </html>
