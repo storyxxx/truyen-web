@@ -81,23 +81,25 @@ localStorage.setItem("lastChap", window.location.href);
 // ===================== SWIPE FIX =====================
 
 let startY = 0;
-let startX = 0;
+let isScrolling = false;
 
 document.addEventListener("touchstart", e => {
   startY = e.touches[0].clientY;
-  startX = e.touches[0].clientX;
+  isScrolling = false;
+});
+
+document.addEventListener("touchmove", () => {
+  isScrolling = true; // đang scroll thật
 });
 
 document.addEventListener("touchend", e => {
+  if (isScrolling) return; // ❌ nếu là scroll thì bỏ
+
   let endY = e.changedTouches[0].clientY;
-  let endX = e.changedTouches[0].clientX;
+  let diff = startY - endY;
 
-  let diffY = startY - endY;
-  let diffX = Math.abs(startX - endX);
-
-  // chỉ trigger nếu vuốt mạnh + không phải scroll ngang
-  if (Math.abs(diffY) > 100 && diffX < 50) {
-    if (diffY > 0) nextChap();
+  if (Math.abs(diff) > 150) {
+    if (diff > 0) nextChap();
     else prevChap();
   }
 });
