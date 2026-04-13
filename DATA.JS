@@ -1,9 +1,9 @@
-const stories = [
+window.stories = [
 {
   title: "Khôn Trạch Của Bạo Quân",
   tags: ["ngontinh","codai","H+"],
   link: "truyen/khon-trach-cua-bao-quan.html",
-  img: "images/bia1.jpg",
+  img: "images/bia1.png",
   desc: "Ngôn tình cổ đại H+, cực ngược, cực cuốn"
 },
 {
