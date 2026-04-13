@@ -1,25 +1,23 @@
-// ================= DATA =================
-
 const stories = [
-  {
-    title: "Khôn Trạch Của Bạo Quân",
-    desc: "Ngược tâm, cổ đại, H+, nội dung cực căng",
-    img: "images/bia1.jpg",
-    link: "truyen/khon-trach-cua-bao-quan.html",
-    tags: ["ngontinh", "codai", "H+"]
-  },
-  {
-    title: "Tuyết Trung Chiêu",
-    desc: "Cổ đại, ngược luyến tàn tâm",
-    img: "images/bia2.jpg",
-    link: "truyen/tuyet-trung.html",
-    tags: ["ngontinh", "codai"]
-  },
-  {
-    title: "Xuyên Không Làm Hoàng Hậu",
-    desc: "Xuyên không, sủng ngọt",
-    img: "images/bia3.jpg",
-    link: "truyen/xuyen-khong.html",
-    tags: ["xuyenkhong", "ngontinh"]
-  }
+{
+  title: "Khôn Trạch Của Bạo Quân",
+  tags: ["ngontinh","codai","H+"],
+  link: "truyen/khon-trach-cua-bao-quan.html",
+  img: "images/bia1.jpg",
+  desc: "Ngôn tình cổ đại H+, cực ngược, cực cuốn"
+},
+{
+  title: "Tuyết Trung Chiêu – Trường An Nhất Mộng",
+  tags: ["ngontinh","codai"],
+  link: "truyen/tuyet-trung-chieu-truong-an-nhat-mong.html",
+  img: "images/bia2.jpg",
+  desc: "Truyện cổ đại nhẹ nhàng, sâu sắc"
+},
+{
+  title: "Test",
+  tags: ["ngontinh","codai"],
+  link: "truyen/test.html",
+  img: "images/bia2.jpg",
+  desc: "Truyện test demo"
+}
 ];
