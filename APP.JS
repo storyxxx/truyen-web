@@ -1,4 +1,3 @@
-// ================= CONFIG =================
 let currentPage = 1;
 const perPage = 6;
 
@@ -7,8 +6,7 @@ let filteredStories = [...stories];
 // ================= RENDER =================
 function renderStories() {
   const app = document.getElementById("app");
-
-  if (!app) return; // ❗ tránh crash
+  if (!app) return;
 
   app.innerHTML = "";
 
@@ -17,17 +15,12 @@ function renderStories() {
 
   let pageItems = filteredStories.slice(start, end);
 
-  if (pageItems.length === 0) {
-    app.innerHTML = "<p style='padding:20px'>❌ Không có truyện</p>";
-    return;
-  }
-
   pageItems.forEach(story => {
     const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-      <img src="${story.img}" alt="${story.title}">
+      <img src="${story.img}">
       <div>
         <h2>
           <a href="${story.link}">
@@ -46,10 +39,10 @@ function renderStories() {
 
 // ================= PAGINATION =================
 function renderPagination() {
-  const totalPages = Math.ceil(filteredStories.length / perPage);
   const container = document.getElementById("pagination");
-
   if (!container) return;
+
+  const totalPages = Math.ceil(filteredStories.length / perPage);
 
   container.innerHTML = "";
 
@@ -57,14 +50,11 @@ function renderPagination() {
     const btn = document.createElement("button");
     btn.innerText = i;
 
-    if (i === currentPage) {
-      btn.classList.add("active");
-    }
+    if (i === currentPage) btn.classList.add("active");
 
     btn.onclick = () => {
       currentPage = i;
       renderStories();
-      window.scrollTo(0, 0);
     };
 
     container.appendChild(btn);
@@ -87,7 +77,7 @@ if (searchInput) {
   });
 }
 
-// ================= FILTER TAG =================
+// ================= FILTER =================
 function filterTag(tag) {
   if (tag === "all") {
     filteredStories = [...stories];
@@ -107,6 +97,4 @@ function toggleDark() {
 }
 
 // ================= INIT =================
-document.addEventListener("DOMContentLoaded", () => {
-  renderStories();
-});
+renderStories();
