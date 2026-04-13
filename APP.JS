@@ -21,9 +21,9 @@ function filterTag(tag) {
   const cards = document.querySelectorAll(".card");
 
   cards.forEach(card => {
-    const tags = card.dataset.tag || "";
+    const tags = (card.dataset.tag || "").toLowerCase().split(" ");
 
-    if (tag === "all" || tags.includes(tag)) {
+    if (tag === "all" || tags.includes(tag.toLowerCase())) {
       card.style.display = "flex";
     } else {
       card.style.display = "none";
