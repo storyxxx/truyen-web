@@ -1,4 +1,4 @@
-// ================= DATA =================
+// ================= CONFIG =================
 let currentPage = 1;
 const perPage = 6;
 
@@ -7,6 +7,9 @@ let filteredStories = [...stories];
 // ================= RENDER =================
 function renderStories() {
   const app = document.getElementById("app");
+
+  if (!app) return; // ❗ tránh crash
+
   app.innerHTML = "";
 
   let start = (currentPage - 1) * perPage;
@@ -14,12 +17,17 @@ function renderStories() {
 
   let pageItems = filteredStories.slice(start, end);
 
+  if (pageItems.length === 0) {
+    app.innerHTML = "<p style='padding:20px'>❌ Không có truyện</p>";
+    return;
+  }
+
   pageItems.forEach(story => {
     const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-      <img src="${story.img}">
+      <img src="${story.img}" alt="${story.title}">
       <div>
         <h2>
           <a href="${story.link}">
@@ -41,6 +49,8 @@ function renderPagination() {
   const totalPages = Math.ceil(filteredStories.length / perPage);
   const container = document.getElementById("pagination");
 
+  if (!container) return;
+
   container.innerHTML = "";
 
   for (let i = 1; i <= totalPages; i++) {
@@ -54,6 +64,7 @@ function renderPagination() {
     btn.onclick = () => {
       currentPage = i;
       renderStories();
+      window.scrollTo(0, 0);
     };
 
     container.appendChild(btn);
@@ -63,16 +74,18 @@ function renderPagination() {
 // ================= SEARCH =================
 const searchInput = document.getElementById("search");
 
-searchInput.addEventListener("input", function () {
-  const keyword = this.value.toLowerCase();
+if (searchInput) {
+  searchInput.addEventListener("input", function () {
+    const keyword = this.value.toLowerCase();
 
-  filteredStories = stories.filter(s =>
-    s.title.toLowerCase().includes(keyword)
-  );
+    filteredStories = stories.filter(s =>
+      s.title.toLowerCase().includes(keyword)
+    );
 
-  currentPage = 1;
-  renderStories();
-});
+    currentPage = 1;
+    renderStories();
+  });
+}
 
 // ================= FILTER TAG =================
 function filterTag(tag) {
@@ -88,10 +101,12 @@ function filterTag(tag) {
   renderStories();
 }
 
-// ================= DARK MODE =================
+// ================= DARK =================
 function toggleDark() {
   document.body.classList.toggle("dark");
 }
 
 // ================= INIT =================
-renderStories();
+document.addEventListener("DOMContentLoaded", () => {
+  renderStories();
+});
